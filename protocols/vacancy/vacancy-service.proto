@@ -6,7 +6,7 @@ option go_package = "protocols/vacancy";
 import "vacancy-models.proto";
 
 // OrderService is
-service OrderAdminService {
+service VacancyService {
     rpc CreateVacancy(models.Vacancy) returns(VacancyDbEmpty);
 }
 

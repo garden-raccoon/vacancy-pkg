@@ -1,4 +1,4 @@
-module github.com/garden-raccoon/orders-admin-package
+module github.com/garden-raccoon/vacancy-pkg
 
 go 1.23.2
 
