@@ -1,0 +1,27 @@
+syntax = "proto3";
+package models;
+
+option go_package = "protocols/vacancy";
+
+message Vacancy {
+    bytes           vacancy_uuid        = 1;
+    bytes           employer_uuid = 2;
+    string          name        = 3;
+    VacancyDesc           VacancyDesc       =4;
+
+}
+
+message VacancyDesc{
+    repeated string conditions = 1;
+    repeated string responsibilities = 2;
+    repeated string requirements = 3;
+    repeated string skills = 4;
+    string address = 5;
+    int64 phone = 6;
+    string description = 7;
+    int64 price_from = 8;
+    int64 price_to = 9;
+}
+
+
+

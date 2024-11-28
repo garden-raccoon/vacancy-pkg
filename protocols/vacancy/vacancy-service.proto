@@ -1,0 +1,15 @@
+syntax = "proto3";
+package models;
+
+option go_package = "protocols/vacancy";
+
+import "vacancy-models.proto";
+
+// OrderService is
+service OrderAdminService {
+    rpc CreateVacancy(models.Vacancy) returns(VacancyDbEmpty);
+}
+
+
+message VacancyDbEmpty {}
+
