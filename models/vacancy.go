@@ -33,15 +33,15 @@ func (v Vacancy) Proto() *proto.Vacancy {
 		Name:         v.Name,
 	}
 	vacancyDesc := &proto.VacancyDesc{
-		Conditions:       pb.VacancyDesc.Conditions,
-		Responsibilities: pb.VacancyDesc.Responsibilities,
-		Requirements:     pb.VacancyDesc.Requirements,
-		Skills:           pb.VacancyDesc.Skills,
-		Address:          pb.VacancyDesc.Address,
-		Phone:            pb.VacancyDesc.Phone,
-		Description:      pb.VacancyDesc.Description,
-		PriceFrom:        pb.VacancyDesc.PriceFrom,
-		PriceTo:          pb.VacancyDesc.PriceTo,
+		Conditions:       v.VacancyDesc.Conditions,
+		Responsibilities: v.VacancyDesc.Responsibilities,
+		Requirements:     v.VacancyDesc.Requirements,
+		Skills:           v.VacancyDesc.Skills,
+		Address:          v.VacancyDesc.Address,
+		Phone:            int64(v.VacancyDesc.Phone),
+		Description:      v.VacancyDesc.Description,
+		PriceFrom:        int64(v.VacancyDesc.PriceFrom),
+		PriceTo:          int64(v.VacancyDesc.PriceTo),
 	}
 	pb.VacancyDesc = vacancyDesc
 	return pb
