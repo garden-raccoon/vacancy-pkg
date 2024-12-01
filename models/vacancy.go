@@ -7,10 +7,10 @@ import (
 )
 
 type Vacancy struct {
-	Name         string       `json:"name"`
-	VacancyUUID  uuid.UUID    `json:"vacancy_uuid"`
-	EmployerUUID uuid.UUID    `json:"employer_uuid"`
-	VacancyDesc  *VacancyDesc `json:"vacancy_desc"`
+	Name        string       `json:"name"`
+	VacancyUUID uuid.UUID    `json:"vacancy_uuid"`
+	UserUUID    uuid.UUID    `json:"user_uuid"`
+	VacancyDesc *VacancyDesc `json:"vacancy_desc"`
 }
 type VacancyDesc struct {
 	Responsibilities []string `json:"responsibilities"`
@@ -28,9 +28,9 @@ type VacancyDesc struct {
 func (v Vacancy) Proto() *proto.Vacancy {
 
 	pb := &proto.Vacancy{
-		VacancyUuid:  v.VacancyUUID.Bytes(),
-		EmployerUuid: v.EmployerUUID.Bytes(),
-		Name:         v.Name,
+		VacancyUuid: v.VacancyUUID.Bytes(),
+		UserUuid:    v.UserUUID.Bytes(),
+		Name:        v.Name,
 	}
 	vacancyDesc := &proto.VacancyDesc{
 		Conditions:       v.VacancyDesc.Conditions,

@@ -5,7 +5,7 @@ option go_package = "protocols/vacancy";
 
 message Vacancy {
     bytes           vacancy_uuid        = 1;
-    bytes           employer_uuid = 2;
+    bytes           user_uuid = 2;
     string          name        = 3;
     VacancyDesc           VacancyDesc       =4;
 

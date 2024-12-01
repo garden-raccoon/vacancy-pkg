@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	VacancyService_CreateVacancy_FullMethodName = "/models.VacancyService/CreateVacancy"
+	VacancyService_CreateVacancy_FullMethodName = "/service.VacancyService/CreateVacancy"
 )
 
 // VacancyServiceClient is the client API for VacancyService service.
@@ -112,7 +112,7 @@ func _VacancyService_CreateVacancy_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var VacancyService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "models.VacancyService",
+	ServiceName: "service.VacancyService",
 	HandlerType: (*VacancyServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
