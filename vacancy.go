@@ -17,11 +17,9 @@ import (
 // timeOut is  hardcoded GRPC requests timeout value
 const timeOut = 60
 
-// Debug on/off
-var Debug = true
-
 type IVacancyAPI interface {
 	CreateVacancy(*models.Vacancy) error
+	GetVacancies() ([]*models.Vacancy, error)
 
 	// Close GRPC Api connection
 	Close() error
@@ -69,4 +67,19 @@ func (api *Api) initConn(addr string) (err error) {
 
 	api.ClientConn, err = grpc.Dial(addr, grpc.WithInsecure(), grpc.WithKeepaliveParams(kacp))
 	return
+}
+func (api *Api) GetVacancies() ([]*models.Vacancy, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
+	defer cancel()
+
+	var resp *proto.Vacancies
+	empty := new(proto.VacancyDbEmpty)
+	resp, err := api.VacancyServiceClient.GetVacancies(ctx, empty)
+	if err != nil {
+		return nil, fmt.Errorf("GetOrders api request: %w", err)
+	}
+
+	vacs := models.VacanciesFromProto(resp)
+
+	return vacs, nil
 }

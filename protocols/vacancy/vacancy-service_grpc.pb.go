@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	VacancyService_CreateVacancy_FullMethodName = "/service.VacancyService/CreateVacancy"
+	VacancyService_GetVacancies_FullMethodName  = "/service.VacancyService/GetVacancies"
 )
 
 // VacancyServiceClient is the client API for VacancyService service.
@@ -29,6 +30,7 @@ const (
 // OrderService is
 type VacancyServiceClient interface {
 	CreateVacancy(ctx context.Context, in *Vacancy, opts ...grpc.CallOption) (*VacancyDbEmpty, error)
+	GetVacancies(ctx context.Context, in *VacancyDbEmpty, opts ...grpc.CallOption) (*Vacancies, error)
 }
 
 type vacancyServiceClient struct {
@@ -49,6 +51,16 @@ func (c *vacancyServiceClient) CreateVacancy(ctx context.Context, in *Vacancy, o
 	return out, nil
 }
 
+func (c *vacancyServiceClient) GetVacancies(ctx context.Context, in *VacancyDbEmpty, opts ...grpc.CallOption) (*Vacancies, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Vacancies)
+	err := c.cc.Invoke(ctx, VacancyService_GetVacancies_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VacancyServiceServer is the server API for VacancyService service.
 // All implementations must embed UnimplementedVacancyServiceServer
 // for forward compatibility.
@@ -56,6 +68,7 @@ func (c *vacancyServiceClient) CreateVacancy(ctx context.Context, in *Vacancy, o
 // OrderService is
 type VacancyServiceServer interface {
 	CreateVacancy(context.Context, *Vacancy) (*VacancyDbEmpty, error)
+	GetVacancies(context.Context, *VacancyDbEmpty) (*Vacancies, error)
 	mustEmbedUnimplementedVacancyServiceServer()
 }
 
@@ -68,6 +81,9 @@ type UnimplementedVacancyServiceServer struct{}
 
 func (UnimplementedVacancyServiceServer) CreateVacancy(context.Context, *Vacancy) (*VacancyDbEmpty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateVacancy not implemented")
+}
+func (UnimplementedVacancyServiceServer) GetVacancies(context.Context, *VacancyDbEmpty) (*Vacancies, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVacancies not implemented")
 }
 func (UnimplementedVacancyServiceServer) mustEmbedUnimplementedVacancyServiceServer() {}
 func (UnimplementedVacancyServiceServer) testEmbeddedByValue()                        {}
@@ -108,6 +124,24 @@ func _VacancyService_CreateVacancy_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VacancyService_GetVacancies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VacancyDbEmpty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VacancyServiceServer).GetVacancies(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VacancyService_GetVacancies_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VacancyServiceServer).GetVacancies(ctx, req.(*VacancyDbEmpty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VacancyService_ServiceDesc is the grpc.ServiceDesc for VacancyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -118,6 +152,10 @@ var VacancyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateVacancy",
 			Handler:    _VacancyService_CreateVacancy_Handler,
+		},
+		{
+			MethodName: "GetVacancies",
+			Handler:    _VacancyService_GetVacancies_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

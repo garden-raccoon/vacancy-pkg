@@ -10,6 +10,9 @@ message Vacancy {
     VacancyDesc           VacancyDesc       =4;
 
 }
+message Vacancies {
+    repeated Vacancy Vacancies = 1;
+}
 
 message VacancyDesc{
     repeated string conditions = 1;

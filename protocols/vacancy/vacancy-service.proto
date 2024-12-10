@@ -8,6 +8,8 @@ import "vacancy-models.proto";
 // OrderService is
 service VacancyService {
     rpc CreateVacancy(models.Vacancy) returns(VacancyDbEmpty);
+    rpc GetVacancies(VacancyDbEmpty) returns(models.Vacancies);
+
 }
 
 
