@@ -48,6 +48,7 @@ func New(addr string) (IVacancyAPI, error) {
 	if err := api.initConn(addr); err != nil {
 		return nil, fmt.Errorf("create Battles Api:  %w", err)
 	}
+	api.HealthClient = grpc_health_v1.NewHealthClient(api.ClientConn)
 
 	api.VacancyServiceClient = proto.NewVacancyServiceClient(api.ClientConn)
 	return api, nil
@@ -100,7 +101,7 @@ func (api *Api) HealthCheck() error {
 	api.mu.Lock()
 	defer api.mu.Unlock()
 
-	resp, err := api.HealthClient.Check(ctx, &grpc_health_v1.HealthCheckRequest{Service: "userapi"})
+	resp, err := api.HealthClient.Check(ctx, &grpc_health_v1.HealthCheckRequest{Service: "vacancyapi"})
 	if err != nil {
 		return fmt.Errorf("healthcheck error: %w", err)
 	}
