@@ -2,7 +2,11 @@ package vacancy
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/health/grpc_health_v1"
+	"sync"
 	"time"
 
 	"google.golang.org/grpc"
@@ -20,6 +24,7 @@ const timeOut = 60
 type IVacancyAPI interface {
 	CreateVacancy(*models.Vacancy) error
 	GetVacancies() ([]*models.Vacancy, error)
+	HealthCheck() error
 
 	// Close GRPC Api connection
 	Close() error
@@ -30,8 +35,10 @@ type IVacancyAPI interface {
 type Api struct {
 	addr    string
 	timeout time.Duration
+	mu      sync.Mutex
 	*grpc.ClientConn
 	proto.VacancyServiceClient
+	grpc_health_v1.HealthClient
 }
 
 // New create new Battles Api instance
@@ -65,7 +72,10 @@ func (api *Api) initConn(addr string) (err error) {
 		PermitWithoutStream: true,             // send pings even without active streams
 	}
 
-	api.ClientConn, err = grpc.Dial(addr, grpc.WithInsecure(), grpc.WithKeepaliveParams(kacp))
+	api.ClientConn, err = grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithKeepaliveParams(kacp))
+	if err != nil {
+		return fmt.Errorf("failed to dial: %w", err)
+	}
 	return
 }
 func (api *Api) GetVacancies() ([]*models.Vacancy, error) {
@@ -82,4 +92,22 @@ func (api *Api) GetVacancies() ([]*models.Vacancy, error) {
 	vacs := models.VacanciesFromProto(resp)
 
 	return vacs, nil
+}
+func (api *Api) HealthCheck() error {
+	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
+	defer cancel()
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+
+	resp, err := api.HealthClient.Check(ctx, &grpc_health_v1.HealthCheckRequest{Service: "userapi"})
+	if err != nil {
+		return fmt.Errorf("healthcheck error: %w", err)
+	}
+
+	if resp.Status != grpc_health_v1.HealthCheckResponse_SERVING {
+		return fmt.Errorf("node is %s", errors.New("service is unhealthy"))
+	}
+	//api.status = service.StatusHealthy
+	return nil
 }
