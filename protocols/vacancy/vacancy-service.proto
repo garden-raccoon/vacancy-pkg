@@ -9,9 +9,17 @@ import "vacancy-models.proto";
 service VacancyService {
     rpc CreateVacancy(models.Vacancy) returns(VacancyDbEmpty);
     rpc GetVacancies(VacancyDbEmpty) returns(models.Vacancies);
-
+    rpc GetEmployerFromVacancy(VacancyReq) returns(EmployerResp);
 }
 
+message VacancyReq{
+    bytes           vacancy_uuid        = 1;
+
+}
+message EmployerResp{
+    string   user_uuid  = 1;
+
+}
 
 message VacancyDbEmpty {}
 

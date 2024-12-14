@@ -25,7 +25,7 @@ type IVacancyAPI interface {
 	CreateVacancy(*models.Vacancy) error
 	GetVacancies() ([]*models.Vacancy, error)
 	HealthCheck() error
-
+	GetEmployerFromVacancy(vacUUID []byte) (string, error)
 	// Close GRPC Api connection
 	Close() error
 }
@@ -94,6 +94,18 @@ func (api *Api) GetVacancies() ([]*models.Vacancy, error) {
 
 	return vacs, nil
 }
+func (api *Api) GetEmployerFromVacancy(vacUUID []byte) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
+	defer cancel()
+	req := &proto.VacancyReq{VacancyUuid: vacUUID}
+
+	resp, err := api.VacancyServiceClient.GetEmployerFromVacancy(ctx, req)
+	if err != nil {
+		return "", fmt.Errorf("GetOrders api request: %w", err)
+	}
+	return resp.UserUuid, nil
+}
+
 func (api *Api) HealthCheck() error {
 	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
 	defer cancel()
