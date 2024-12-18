@@ -22,6 +22,7 @@ const (
 	VacancyService_CreateVacancy_FullMethodName          = "/service.VacancyService/CreateVacancy"
 	VacancyService_GetVacancies_FullMethodName           = "/service.VacancyService/GetVacancies"
 	VacancyService_GetEmployerFromVacancy_FullMethodName = "/service.VacancyService/GetEmployerFromVacancy"
+	VacancyService_GetVacancyByUUID_FullMethodName       = "/service.VacancyService/GetVacancyByUUID"
 )
 
 // VacancyServiceClient is the client API for VacancyService service.
@@ -33,6 +34,7 @@ type VacancyServiceClient interface {
 	CreateVacancy(ctx context.Context, in *Vacancy, opts ...grpc.CallOption) (*VacancyDbEmpty, error)
 	GetVacancies(ctx context.Context, in *VacancyDbEmpty, opts ...grpc.CallOption) (*Vacancies, error)
 	GetEmployerFromVacancy(ctx context.Context, in *VacancyReq, opts ...grpc.CallOption) (*EmployerResp, error)
+	GetVacancyByUUID(ctx context.Context, in *VacancyReq, opts ...grpc.CallOption) (*Vacancy, error)
 }
 
 type vacancyServiceClient struct {
@@ -73,6 +75,16 @@ func (c *vacancyServiceClient) GetEmployerFromVacancy(ctx context.Context, in *V
 	return out, nil
 }
 
+func (c *vacancyServiceClient) GetVacancyByUUID(ctx context.Context, in *VacancyReq, opts ...grpc.CallOption) (*Vacancy, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Vacancy)
+	err := c.cc.Invoke(ctx, VacancyService_GetVacancyByUUID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VacancyServiceServer is the server API for VacancyService service.
 // All implementations must embed UnimplementedVacancyServiceServer
 // for forward compatibility.
@@ -82,6 +94,7 @@ type VacancyServiceServer interface {
 	CreateVacancy(context.Context, *Vacancy) (*VacancyDbEmpty, error)
 	GetVacancies(context.Context, *VacancyDbEmpty) (*Vacancies, error)
 	GetEmployerFromVacancy(context.Context, *VacancyReq) (*EmployerResp, error)
+	GetVacancyByUUID(context.Context, *VacancyReq) (*Vacancy, error)
 	mustEmbedUnimplementedVacancyServiceServer()
 }
 
@@ -100,6 +113,9 @@ func (UnimplementedVacancyServiceServer) GetVacancies(context.Context, *VacancyD
 }
 func (UnimplementedVacancyServiceServer) GetEmployerFromVacancy(context.Context, *VacancyReq) (*EmployerResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEmployerFromVacancy not implemented")
+}
+func (UnimplementedVacancyServiceServer) GetVacancyByUUID(context.Context, *VacancyReq) (*Vacancy, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVacancyByUUID not implemented")
 }
 func (UnimplementedVacancyServiceServer) mustEmbedUnimplementedVacancyServiceServer() {}
 func (UnimplementedVacancyServiceServer) testEmbeddedByValue()                        {}
@@ -176,6 +192,24 @@ func _VacancyService_GetEmployerFromVacancy_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VacancyService_GetVacancyByUUID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VacancyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VacancyServiceServer).GetVacancyByUUID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VacancyService_GetVacancyByUUID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VacancyServiceServer).GetVacancyByUUID(ctx, req.(*VacancyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VacancyService_ServiceDesc is the grpc.ServiceDesc for VacancyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -194,6 +228,10 @@ var VacancyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetEmployerFromVacancy",
 			Handler:    _VacancyService_GetEmployerFromVacancy_Handler,
+		},
+		{
+			MethodName: "GetVacancyByUUID",
+			Handler:    _VacancyService_GetVacancyByUUID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

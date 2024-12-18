@@ -10,6 +10,7 @@ service VacancyService {
     rpc CreateVacancy(models.Vacancy) returns(VacancyDbEmpty);
     rpc GetVacancies(VacancyDbEmpty) returns(models.Vacancies);
     rpc GetEmployerFromVacancy(VacancyReq) returns(EmployerResp);
+    rpc GetVacancyByUUID(VacancyReq) returns(models.Vacancy);
 }
 
 message VacancyReq{
